@@ -67,10 +67,10 @@ After the preliminary step of taint propagation, the data flow analysis framewor
 			$F_p$  & $\rightarrow$ & $F_{p} \vee conj \ \vert \ conj$ \\
 			$conj$ & $\rightarrow$ & $(conj \wedge term)\ \vert\ term$ \\
 			$term$ & $\rightarrow$ & $stat\ \vert\ \neg stat$ \\
-			$stat$ & $\rightarrow$ & $statement\ \vert\ \boldmath{var} == statement$\\
-			$statement$ & $\rightarrow$ & $statement\ \boldmath{+}\ single\_stat\ \vert\ single\_stat$\\
-			$single\_stat$ & $\rightarrow$ & $\boldmath{var}\ \vert\ \boldmath{constant}\ \vert\ lib\_method$ \\
-			$lib\_method$ & $\rightarrow$ & $\boldmath{solv\_stat}\ \vert\ \boldmath{nonsolv\_stat}$ \\
+			$stat$ & $\rightarrow$ & $statement\ \vert\ var == statement$\\
+			$statement$ & $\rightarrow$ & $statement\ +\ single\_stat\ \vert\ single\_stat$\\
+			$single\_stat$ & $\rightarrow$ & $var\ \vert\ constant\ \vert\ lib\_method$ \\
+			$lib\_method$ & $\rightarrow$ & $solv\_stat\ \vert\ nonsolv\_stat$ \\
 		\end{tabular}
   	\caption{Grammar of Symbolic Formula}
 	\label{fig:grammar}
