@@ -1,0 +1,35 @@
+Chapter 1. Introduction
+We must differentiate our work from related work.
+Adrienne Proter Felt's two papers are about a potential vulnerability
+description. We also find the concrete exploits. Our tool can be used 
+to find exploitable vulnerabilities. 
+
+Chapter 2.
+Running Example needed. 
+Sections A and B are both about the same thing (Android communication system overview).
+The system overview could be shorter.
+Threat model could stem from the running example.
+Goals need to be discussed (Analyzer and subsequent exploit generation as a proof of vulnerability). 
+An approach overview with a high level description of what we do to warm up the reader: Analyze, find paths, 
+automatically create exploits according to analysis results.
+
+Chapter 3. Change name to Architecture, merge with Chapter 4
+Divide the tool into components and change labels of Figure 2 (name according to
+concepts, not implementation details).
+There are two big components, analyzer and solver (can there be more?).
+Describe each component in turn (challenges and solutions), using the 
+running example as illustration.
+
+Chapter 4. Implementation.
+Here speak about Heros, Kaluza, the things done to speed up analysis.
+
+Chapter 5. Results.
+Describe a couple of applications in more detail (those whose vulnerabilities lead to good attacks)
+Table needs to be described in a paragraph, what is Attacker Implications?
+Discussion about defensive applications is OK. 
+
+
+
+
+
+

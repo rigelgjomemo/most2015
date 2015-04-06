@@ -1,0 +1,5 @@
+% !TEX root =  ../main.tex
+\section{Conclusions}
+\label{sec:concl}
+
+In this paper, we describe an automated analysis framework to study validation checks over the data received via Intent messages in Android applications. Our method for automatically detecting these vulnerabilities relies on static taint analysis and symbolic execution, using the IFDS framework. Furthermore, we use a solver to automatically generate a  proof-of-concept attacker app that validate the vulnerabilities. We evaluate our approach on 64 popular applications downloaded from the Google Play Store, finding 29 potential vulnerabilities, and automatically exploiting (and thus confirming) 26 of these. Our results confirm that a large percentage of commonly-used applications do not implement appropriate security safeguards for Intent communications.

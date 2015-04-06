@@ -1,0 +1,29 @@
+% !TEX root =  ../main.tex
+\subsection{Attack app construction}
+Having generated the exploit automatically, we take a step further, and 
+generate an attack application that exploits the vulnerable application. 
+An effective attack is automatically prepared in the form of a well-crafted application able to send
+Intent messages to the right target, at the right moment in time and carrying the malicious payload.
+It is entirely possible to present such attack application as a simple utility application (such as a torch), 
+which runs a malicious \emph{service} behind the scene.
+
+Our malicious service embeds the exploit strings obtained from the previous steps in a list of pre-populated
+Intent messages ready to be sent, one for each demonstrated vulnerability.
+In order for the attack to be successful, we enhance the service logic and domain knowledge to
+obtain the best attack scenario possible: the user perception of the environment during the attack must
+be as transparent as possible.
+
+For each of the messages, the service first needs to check whether the target vulnerable application
+is installed on the system or not. We do this through the Android \emph{Package Manager API} offering
+the $getInstalledApplications$ method. The invocation with the $PackageManager.GET\_META\_DATA$ specified as argument
+returns a complete list of all the applications installed on the phone. The list contains several meta-data such as
+the application's package name or the application's launch Intent message.
+
+In the next step of the attack the application checks if the application is currently active (in foreground) on the device.
+This is particularly important for two reasons: first we limit the context switching consequences of presenting
+to the user a completed unrelated content (e.g. a different application screen), then we can assume
+that the user uses the vulnerable application and hence that the user is logged in at the moment of the attack.
+Also in this case, Androids offers an API: the \emph{Activity Manager API},
+in particular the $getRunningAppProcesses$ method that returns a list of $RunningAppProcessInfo$ containing the foreground/background information along with the packages Application process package information, that are used to identify the application. When it ensures that a victim application is installed and running, the attacker app easily sends the malicious Intent message to trigger the attack.
+
+% By separating these two checks we can leave our application silent, avoiding to poll the running processes, if none of the vulnerable applications is currently installed on the device. Indeed, since application installations are not so common, the installation check can be performed in reasonably long time intervals.
