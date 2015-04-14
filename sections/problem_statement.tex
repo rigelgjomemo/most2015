@@ -55,7 +55,7 @@ void onCreate(Bundle savedInstance) {
    file = file.replace("..", "");
  String userId = getUserID(user);
  if (userId != -1)
-   textView.setText(user_name);
+   textView.setText(user);
  String b64File = toBase64(file);
  String httpPar = toHttpParams(b64File,user_id);
  . . .
@@ -129,7 +129,7 @@ As has been recognized by previous work, to detect this type of vulnerabilities,
 
 
 %\label{sec:running-example}
-\todo{Edited code}
+%\todo{Edited code}
 % \begin{figure*}[t]
 % \centering
  %  \begin{subfigure}[b]{3.5in}

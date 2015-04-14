@@ -1,7 +1,7 @@
 % !TEX root =  ../main.tex
 \section{Results}
 \label{sec:results}
-\todo{Discuss the attacker app in the results}
+
 
 %In order to demonstrate the effectiveness of our work, we analyze a set of well-known Android applications, categorize the attack scenarios we find, and discuss our findings in detail.
 
@@ -117,7 +117,9 @@
 
 
 \subsection{Experimental Setup}
-We evaluate our approach on 64 free applications of different sizes, picked from different categories of the Google Play Store. The evaluation was performed on a quad-core machine equipped with 16 GB of RAM. The need of a large amount of memory was driven by the application call graph generation performed by Soot. The memory requirements during the IFDS run and super-graph construction varied depending on the code size, peaking at approximately 5 GB. We decided to label as sink statements UI rendering APIs to detect opportunities for UI integrity attacks, and provided several exploit states $V_E$ to each of them.
+We evaluate our approach on 64 free applications of different sizes, picked from different categories of the Google Play Store. { \color{orange}We targeted a class of easily verifiable vulnerabilities, which includes manipulation of UI components, which could lead to phishing attacks. For each application, we targeted the code of the UI components and determined the possible values for the state $V_E$ in those components. Verification of different vulnerabilities is also possible. For instance, for SQL injection vulnerabilities, the state $V_E$ can be set to contain a malicious query and the results of the query may be checked after the attack. For cross site scripting attacks targeting sinks with network operations, $V_E$ may be set to contain cross site scripting code and the effects can be checked on the remote server.} \todo{W1.1 and W1.3 We added a description of how we determined the values of $V_E$ in our evaluation. Also, we added a description of other types of attacks and how they may be evaluated. In our tests, we found out that all the database operations of the applications use the default Android implementation with prepared statements, while for network operations, we did not have access to the remote server of the applications.}
+
+The evaluation was performed on a quad-core machine equipped with 16 GB of RAM. The need of a large amount of memory was driven by the application call graph generation performed by Soot. The memory requirements during the IFDS run and super-graph construction varied depending on the code size, peaking at approximately 5 GB.
 %  The sample set includes applications of various code size an number of components.
 % The analyzer was able to completely terminate the analysis on 64
 % applications. For the remaining 16 we experienced issues due to the inability of
@@ -131,7 +133,7 @@ We evaluate our approach on 64 free applications of different sizes, picked from
 % The results of the analysis were used to both test and adjust the analyzer. We iteratively increased the number of analyzable cases adjusting the analyzer according to the feedback collected by previously executed analysis.
 
 \subsection{Experimental Results}
-The evaluation detected paths from sources to sinks in 29 of the 64 applications. Out of these 29 applications, the string solver was able to produce exploit strings for 26 of them. We divide these vulnerabilities according to the class of UI elements that can be targeted by an attacker:
+The evaluation detected paths from sources to sinks in 29 of the 64 applications. Out of these 29 applications, the string solver was able to produce $V_I$ exploit strings for 26 of them. {\color{orange} These exploits were manually tested and confirmed}. \todo{W2.1.} We divide these vulnerabilities according to the class of UI elements that can be targeted by an attacker:
 \begin{itemize}
     \item\emph{Entire screen:} vulnerabilities in which
         an attacker could change the content of the main portion of application screens, keeping
@@ -168,7 +170,7 @@ In this section, we describe in detail four attack scenarios chosen from the vul
 \begin{figure}[tb]
   \centering
     \includegraphics[width=1.8in]{./images/mint-example.png}
-  \caption{Example of clickjacking attack on the Mint app.}
+  \caption{Example of phishing attack on the Mint app.}
   \label{fig:mint}
 \end{figure}
 
@@ -176,7 +178,7 @@ In this section, we describe in detail four attack scenarios chosen from the vul
 Our tool reported a \emph{entire screen} vulnerability in  Mint.
 The UI integrity attack consists in showing to the user an arbitrary web page
 inside the application visual context.
-A clickjacking attack~\cite{android-clickjacking} scenario consists in presenting to the user a crafted web page resembling Mint's look and feel inside the application.
+A phishing attack scenario consists in presenting to the user a crafted web page resembling Mint's look and feel inside the application. \todo{W2.7}
 In the page, the user is asked to reinsert her credit card details complete
 with verification code because of identity verification purposes. Reasonably, the user would act as asked, since they already inserted such information in the Mint system.
 The loaded web page is now free to send the collected credit card information to any server. It is also important to point out that the URL of the currently visualized page is never presented to the user. An example of this attack can be seen in Figure~\ref{fig:mint}.
@@ -280,7 +282,7 @@ In Table~\ref{table:other_experimental} we summarize several performance results
 execution time range is very wide, varying from a minimum of 2.4 minutes for 3 analyzed components to a maximum of 33.3 minutes spent to analyze an
 application including 31 components, with an average of 12.3 minutes per application. The execution time is heavily dominated by the IFDS analysis which consists in 70-80\% of the overall execution time.
 
-\todo{Second sentence in this paragraph is a little bit unclear}
+
 We discovered 92 paths leading to a sink out of 537 analyzed with an average of 4.2 vulnerable paths per application. For each vulnerable path the analyzer collected an average number of 17.2 statements, with an average number of 5.8 statements including API calls. We approximated 31.2\% of the supported API methods by not giving precise formulations due to Kaluza limitations, as described in Section \ref{section:kaluzaTranslation}. We found this not to be a limitation to our approach for two reasons: this apparently large number of approximations were performed, in practice, over the 7.7\% of the total number of translated statements including library calls, meaning that approximated transformations are, in general, infrequent.
 Second, it is worth noting that within the analyzed paths, very few include validation checks over the data in input. In particular, our tool found at most 3 checks in those paths, usually checks on null values. In short validation checks involving Intent payloads are performed in the 23\% of the vulnerable paths.
 
@@ -289,6 +291,10 @@ Second, it is worth noting that within the analyzed paths, very few include vali
 From our results, it is clear that only a few applications properly implement validation of data received from Intent messages. Most applications perform only basic checks on Intent payloads parts, such as null-checks, performed only to protect against malformed Intents payload tuples. Such checks are not strict enough to defend application resources against more sophisticated Intent spoofing attacks as the ones we considered in this work.
 
 In order to verify the intents' origins, currently developers may need to implement custom authentication mechanisms, given the absence of a system-provided intent origin verification feature. A recommended solution consists in exchanging keys between intent sender and receiver, and requiring signatures to be exchanged within intents as a mean of authentication. This solution is very similar to the one used in web application exchanging CSRF tokens, and it is very effective in practice, since it guarantees complete protection to application components possibly exposed to Intent attacks. However, it requires communication of key material among applications before normal communications can start.
+
+{\color{orange}
+A similar mechanism to provide trust among applications components in Android is the $signature$ permission type, where a permission is automatically granted to a request from a component, if both the sender and receiver components belong to applications signed with the same developer key. However, this mechanism provide trust among apps developed by the same developer and would limit communications among apps of different developers. 
+} \todo{W1.6}
 % this solution is
 % not generalizable to the case in which the receiver is intended to be accessed by selected application. Because of application sandboxing, two different application can not share (or partially share) memory parts.
 
@@ -297,4 +303,6 @@ in the Intent API to reliably retrieve an intent's origin or sign intent's data 
 % Offering such features means in practice to insert in the environment an additional trusted entity
 % in charge of generating and validating communication signatures. An encrypted communication channel with a verified remote server may also help in solving this problem, even though it would not be practical.
 
-Most importantly, developers should always include strong data validation checks, even when dealing with intents, and should follow all the guidelines to securely implement intent communications by not exposing their application components unnecessarily.
+Most importantly, developers should always include strong data validation checks, even when dealing with intents, and should follow all the guidelines to securely implement intent communications by not exposing their application components unnecessarily. { \color{orange} In addition, another good programming practice is to limit as much as possible the functionality of external components, which may be subverted by an attacker. } \todo{W1.6}
+
+
