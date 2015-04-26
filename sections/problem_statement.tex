@@ -33,7 +33,7 @@ In this section, we provide a running example and illustrate the problem we are 
 % to send messages to those components. 
 
 % \subsection{Threat Model and Running Example}
-\textbf{Threat Model}. In our threat model, an attacker first analyzes the manifest file to identify exposed components that can receive intent messages. An example of such a component is depicted in Listing \ref{lst:example}, where the \textit{onCreate} method (line 1) is called to start a component. Next, the attacker identifies statements inside those components whose execution may be subverted to the attacker' s advantage. These statements may include network operations, database operations, updates to GUI elements and so on, and their execution may be subverted by modifying their parameter values, e.g., URL-s where data are sent by network operations, database queries, and the text of GUI elements. One such statement, dealing with a network operation is the HttpPost object creation in line 19. If the attacker is able to modify the value of the \textit{url} variable to a domain under the attacker's control or the value of the \textit{httpPar} variable to a string containing a cross-site scripting attack, then the component can be used to leak data to the attacker's web site or to execute a cross-site scripting attack, respectively. Another statement that may be of interest to an attacker is the one on line 31, which sets the path of a file that is ultimately sent over the network. If the attacker is able to modify the value of the variable \textit{p} (for instance, by including ``..'' in the path to perform directory traversal) together with the variable \textit{url}, then the component can be used to send arbitrary files to a host under the attacker's control. 
+\textbf{Threat Model}. In our threat model, an attacker first analyzes the manifest file to identify exposed components that can receive intent messages. An example of such a component is depicted in Listing \ref{lst:example}, where the \textit{onCreate} method (line 1) is called to start a component. Next, the attacker identifies statements inside those components whose execution may be subverted to the attacker' s advantage. These statements may include network operations, database operations, updates to GUI elements and so on, and their execution may be subverted by modifying their parameter values, e.g., URL-s where data are sent by network operations, database queries, and the text of GUI elements. One such statement, dealing with a network operation is the HttpGet object creation in line 19. If the attacker is able to modify the value of the \textit{url} variable to a domain under the attacker's control or the value of the \textit{httpPar} variable to a string containing a cross-site scripting attack, then the component can be used to leak data to the attacker's web site or to execute a cross-site scripting attack, respectively. Another statement that may be of interest to an attacker is the one on line 31, which sets the path of a file that is ultimately sent over the network. If the attacker is able to modify the value of the variable \textit{p} (for instance, by including ``..'' in the path to perform directory traversal) together with the variable \textit{url}, then the component can be used to send arbitrary files to a host under the attacker's control. 
 %We note however, that lines 13-14 sanitize the value of the \textit{file} variable before it reaches line 32. 
 In the rest of this paper, we call such statements targeted by an attacker \textit{sink} statements.
 
@@ -54,16 +54,16 @@ void onCreate(Bundle savedInstance) {
  if (file.contains(".."))
    file = file.replace("..", "");
  String userId = getUserID(user);
- if (userId != -1)
+ if (userId != null)
    textView.setText(user);
  String b64File = toBase64(file);
  String httpPar = toHttpParams(b64File,user_id);
  . . .
  try {
    DefaultHttpClient httpC = new DefaultHttpClient();
-   HttpPost post = new HttpPost(url+httPar);
+   HttpGet get = new HttpGet(url+httPar);
    . . .
-   httpC.execute(post);
+   httpC.execute(get);
  }
  catch(IOException e) {
    e.printStackTrace();
